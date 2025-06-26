@@ -19,6 +19,6 @@
   "homepage": "https://github.com/MendiEisenbach/RiddleProject-#readme",
   "description": "",
   "dependencies": {
-    "readline-sync": "^1.4.10"
+    "prompt-sync": "^4.2.0"
   }
 }
