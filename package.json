@@ -1,0 +1,24 @@
+{
+  "name": "riddleproject",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MendiEisenbach/RiddleProject-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MendiEisenbach/RiddleProject-/issues"
+  },
+  "homepage": "https://github.com/MendiEisenbach/RiddleProject-#readme",
+  "description": "",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
