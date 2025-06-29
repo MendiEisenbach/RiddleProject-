@@ -10,13 +10,14 @@ class Riddle
 
     ask(prompt)
     {
+    console.log(``)
     console.log(this.taskDescription);
     let Answer = ""
     while(Answer != this.correctAnswer)
     {
-        Answer = prompt("Please type your answer:")
+        Answer = prompt("Please type your answer: ")
     }
-    console.log("Correct answer.")
+    console.log("\nCorrect answer.")
     }
 }
 
