@@ -1,8 +1,3 @@
-// import readline from 'readline-sync';
-
-// const name = readline.question('? ');
-// console.log(`hallo, ${name}!`);
-
 import PromptSync from 'prompt-sync';
 import Player from './classes/Player.js';
 import Riddle from './classes/Riddle.js';
