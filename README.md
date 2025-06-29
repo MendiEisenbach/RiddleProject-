@@ -13,6 +13,43 @@ Players are challenged with a series of riddles from various topics and must pro
 - The time taken to answer is recorded.
 - At the end, player statistics are displayed.
 
+
+## Flowchart – Program Logic
+
+START
+  │
+  ▼
+Welcome message is displayed
+  │
+  ▼
+User enters their name
+  │
+  ▼
+Create new Player instance → Player(name)
+  │
+  ▼
+For each riddle in AllRiddles:
+  │
+  ├─► Start timer → Date.now()
+  │
+  ├─► Create new Riddle instance → Riddle(id, name, taskDescription, correctAnswer)
+  │
+  ├─► Ask the riddle → Riddle.ask(prompt)
+  │
+  ├─► End timer → Date.now()
+  │
+  └─► Record time taken → Player.recordTime(start, end)
+  │
+  ▼
+After all riddles answered:
+  │
+  ├─► Show success message
+  │
+  └─► Show stats → Player.showStats()
+  │
+  ▼
+END
+
 ---
 
 ## Project Structure
