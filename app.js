@@ -4,8 +4,10 @@ import Riddle from './classes/Riddle.js';
 import AllRiddles from './riddles/AllRiddles.js';
 
 const prompt = PromptSync();
-
+console.log("\n---------------------------")
 console.log("Welcome to the trivia quiz!")
+console.log("---------------------------")
+
 
 const name = prompt("Please enter your name: ")
 
