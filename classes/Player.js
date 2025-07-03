@@ -1,21 +1,17 @@
-class Player
-{
+class Player {
     constructor(name, times = []) {
-    this.name = name;
-    this.times = times;
-     }
+        this.name = name;
+        this.times = times;
+    }
 
-    recordTime(start, end)
-    {
+    recordTime(start, end) {
         let DurationSolution = end - start;
         this.times.push(DurationSolution);
     }
 
-    showStats()
-    {
+    showStats() {
         let counter = 0;
-        for(let i = 0; i < this.times.length; i++)
-        {
+        for (let i = 0; i < this.times.length; i++) {
             counter += this.times[i]
         }
         console.log(`The total time you spent answering the questions is: ${counter / 1000}`)
