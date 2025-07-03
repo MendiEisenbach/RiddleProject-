@@ -25,16 +25,22 @@ export const writePlayers = (players) => {
 };
 
 
-function findPlayerByName(players, name) {
+export const findPlayerByName = (players, name) => {
+  if (!Array.isArray(players)) return undefined;  
   const lowerName = name.toLowerCase();
 
   for (let i = 0; i < players.length; i++) {
-    if (players[i].name.toLowerCase() === lowerName) {
+    if (
+      players[i].name && 
+      typeof players[i].name === 'string' &&
+      players[i].name.toLowerCase() === lowerName
+    ) {
       return players[i];  
     }
   }
   return undefined;
-}
+};
+
 
 
 export const savePlayerTime = async (name, time) => {
