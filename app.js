@@ -8,19 +8,19 @@ console.log("\n---------------------------")
 console.log("Welcome to the trivia quiz!")
 console.log("---------------------------")
 
-
 const name = prompt("Please enter your name: ")
 
 const myplayer = new Player(name)
 
-for(let oneriddle of AllRiddles)
-{
+for (let oneriddle of AllRiddles) {
     const startTime = Date.now();
 
-    const myriddle = new Riddle(oneriddle.id,
-                                oneriddle.name,
-                                oneriddle.taskDescription,
-                                oneriddle.correctAnswer);
+    const myriddle = new Riddle(
+        oneriddle.id,
+        oneriddle.name,
+        oneriddle.taskDescription,
+        oneriddle.correctAnswer
+    );
 
     myriddle.ask(prompt)
     const endTime = Date.now();
@@ -30,6 +30,15 @@ for(let oneriddle of AllRiddles)
 
 console.log(`\n${myplayer.name} You answered all the questions correctly!`);
 myplayer.showStats()
+
+
+
+
+
+
+
+
+
 
 
 
