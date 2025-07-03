@@ -20,3 +20,14 @@ export const writeFile = (riddles) => {
     })}
 )
 };
+
+
+//  C/R/U
+
+export const deleteRiddle = async (id) => {
+  let riddles = await readRiddles();
+  riddles = riddles.filter(r => r.id !== id);
+  await writeRiddles(riddles);
+}
+
+
