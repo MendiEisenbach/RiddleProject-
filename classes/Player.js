@@ -16,7 +16,6 @@ class Player {
         }
         console.log(`The total time you spent answering the questions is: ${counter / 1000}`)
         console.log(`The average time it took you to solve each question is: ${(counter / this.times.length) / 1000}`)
-
     }
 
     getTotalTimeInSeconds() {
