@@ -46,7 +46,7 @@ export const findPlayerByName = (players, name) => {
 export const savePlayerTime = async (name, time) => {
   try {
     const players = await readPlayers();
-    let player = players.find(p => p.name.toLowerCase() === name.toLowerCase());
+    let player = findPlayerByName(players, name);
 
     if (!player) {
       let maxId = 0;
@@ -58,7 +58,7 @@ export const savePlayerTime = async (name, time) => {
 
       const newPlayer = {
         id: maxId + 1,
-        name,
+        name : name,
         lowestTime: time
       };
 
