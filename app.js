@@ -1,7 +1,7 @@
 import PromptSync from 'prompt-sync';
 import Player from './classes/Player.js';
 import Riddle from './classes/Riddle.js';
-import { readFile } from './riddles/riddleService.js';
+import { readRiddles } from './riddles/riddleService.js';
 import { readPlayers, findPlayerByName, savePlayerTime } from './players/playersService.js';
 
 
@@ -29,7 +29,7 @@ try {
 }
 
 try {
-  const riddlesData = await readFile();
+  const riddlesData = await readRiddles();
   const riddles = riddlesData.map(r => new Riddle(r.id, r.name, r.taskDescription, r.correctAnswer));
 
   console.log(`\nHi ${myplayer.name}, let's start!\n`);
