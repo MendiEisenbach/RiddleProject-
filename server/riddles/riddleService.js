@@ -24,6 +24,8 @@ export const writeRiddles = (riddles) => {
       resolve();
     });
   });
+
+  
 };
 
 
