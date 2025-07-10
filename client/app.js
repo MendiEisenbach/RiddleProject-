@@ -1,8 +1,8 @@
 import PromptSync from 'prompt-sync';
 import Player from './classes/Player.js';
 import Riddle from './classes/Riddle.js';
-import { readRiddles, addRiddle, updateRiddle, deleteRiddle } from './riddles/riddleService.js';
-import { readPlayers, findPlayerByName, savePlayerTime } from './players/playersService.js';
+import { readRiddles, addRiddle, updateRiddle, deleteRiddle } from '../riddles/riddleService.js';
+import { readPlayers, findPlayerByName, savePlayerTime } from '../players/playersService.js';
 
 
 const prompt = PromptSync();
