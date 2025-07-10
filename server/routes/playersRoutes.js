@@ -16,6 +16,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const { name, time } = req.body;
+  console.log('in server');
+  
 
   if (!name || typeof time !== 'number') {
     return res.status(400).json({ error: 'Missing or invalid name/time' });

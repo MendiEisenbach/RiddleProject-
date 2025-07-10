@@ -1,12 +1,10 @@
 import PromptSync from 'prompt-sync';
 import Player from './classes/Player.js';
 import Riddle from './classes/Riddle.js';
-import { readRiddles, addRiddle, updateRiddle, deleteRiddle } from '../riddles/riddleService.js';
-import { readPlayers, findPlayerByName, savePlayerTime } from '../players/playersService.js';
-
-
 const prompt = PromptSync();
+const serverUrl = 'http://localhost:4545'; 
 
+// רגע
 
 async function mainMenu() {
 
@@ -59,10 +57,14 @@ async function playGame() {
 const name = prompt("Please enter your name: ")
 const myplayer = new Player(name)
 
-try {
-  const players = await readPlayers(); 
-
-  const existingPlayer = findPlayerByName(players, name);
+let players = [];
+  try {
+    players = await fetch(`${serverUrl}/api/players`)
+      .then(res => res.json());
+  } catch (err) {
+    console.error("Error fetching players:", err);
+  }
+  const existingPlayer = players.find(p => p.name.toLowerCase() === name.toLowerCase());
 
   if (existingPlayer) {
     console.log(`Welcome back, ${name}! Your best time is ${existingPlayer.lowestTime} seconds.`);
@@ -70,35 +72,46 @@ try {
     console.log(`Welcome, ${name}! This is your first time playing.`);
   }
 
-} catch (err) {
-  console.error("error reading player data:", err);
-}
 
+let riddlesData = [];
 try {
-  const riddlesData = await readRiddles();
+    riddlesData = await fetch(`${serverUrl}/api/riddles`)
+      .then(res => res.json());
+  } catch (err) {
+    console.error("Error fetching riddles:", err);
+  }
   const riddles = riddlesData.map(r => new Riddle(r.id, r.name, r.taskDescription, r.correctAnswer));
 
   console.log(`\nHi ${myplayer.name}, let's start!\n`);
 
 
-  for (const riddle of riddles) {
+    for (const riddle of riddles) {
     const gameStart = Date.now();
     riddle.ask(prompt);
     const gameEnd = Date.now();
-      myplayer.recordTime(gameStart, gameEnd);
-
+    myplayer.recordTime(gameStart, gameEnd);
 }
 
 
 
   console.log(`\n${myplayer.name}, you answered all the questions correctly!`);
   myplayer.showStats();
+const timecur =myplayer.getTotalTimeInSeconds()
+ try {
+    await fetch(`${serverUrl}/api/players`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        time: timecur
+      })
+    });
+  } catch (err) {
+    console.error("Error saving player time:", err);
+  }
+}
 
-  await savePlayerTime(name, myplayer.getTotalTimeInSeconds());
 
-} catch (err) {
-  console.error("error during the game:", err);
-}}
 
 
 async function createRiddle() {
@@ -106,14 +119,14 @@ async function createRiddle() {
   const taskDescription = prompt('Enter description: ');
   const correctAnswer = prompt('Enter correct answer: ');
 
-  const newRiddle = {
-    name : name,
-    taskDescription : taskDescription,
-    correctAnswer : correctAnswer
-  };
+  const newRiddle = { name, taskDescription, correctAnswer };
 
   try {
-    await addRiddle(newRiddle);
+    await fetch(`${serverUrl}/api/riddles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newRiddle)
+    });
     console.log('Riddle added successfully.');
   } catch (err) {
     console.error('Error adding riddle:', err);
@@ -123,7 +136,8 @@ async function createRiddle() {
 
 async function readAllRiddles() {
   try {
-    const riddles = await readRiddles();
+    const riddles = await(await fetch(`${serverUrl}/api/riddles`)).json();
+
     console.log('\n--- All Riddles ---');
     riddles.forEach(r => {
       console.log(`ID: ${r.id}, Name: ${r.name}`);
@@ -138,7 +152,7 @@ async function readAllRiddles() {
 
 async function updateExistingRiddle() {
   try {
-    const riddles = await readRiddles();
+    const riddles = await (await fetch(`${serverUrl}/api/riddles`)).json();
     const idStr = prompt('Enter the ID of the riddle to update: ');
     const id = Number(idStr);
     const riddle = riddles.find(r => r.id === id);
@@ -152,7 +166,12 @@ async function updateExistingRiddle() {
     const taskDescription = prompt(`Enter new description (${riddle.taskDescription}): `) || riddle.taskDescription;
     const correctAnswer = prompt(`Enter new correct answer (${riddle.correctAnswer}): `) || riddle.correctAnswer;
 
-    await updateRiddle(id, { name, taskDescription, correctAnswer });
+    await fetch(`${serverUrl}/api/riddles/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, taskDescription, correctAnswer })
+    });
+
     console.log('Riddle updated successfully.');
   } catch (err) {
     console.error('Error updating riddle:', err);
@@ -165,7 +184,10 @@ async function deleteExistingRiddle() {
     const idStr = prompt('Enter the ID of the riddle to delete: ');
     const id = Number(idStr);
 
-    await deleteRiddle(id);
+    await fetch(`${serverUrl}/api/riddles/${id}`, {
+      method: 'DELETE'
+    });
+
     console.log('Riddle deleted successfully.');
   } catch (err) {
     console.error('Error deleting riddle:', err);
@@ -176,12 +198,11 @@ async function deleteExistingRiddle() {
 
 async function viewLeaderboard() {
   try {
-    const players = await readPlayers();
+    const players = await (await fetch(`${serverUrl}/api/players`)).json();
 
     for (let i = 0; i < players.length - 1; i++) {
       for (let j = 0; j < players.length - 1; j++) {
         if (players[j].lowestTime > players[j + 1].lowestTime) {
-
           const temp = players[j];
           players[j] = players[j + 1];
           players[j + 1] = temp;
@@ -189,7 +210,7 @@ async function viewLeaderboard() {
       }
     }
 
-    console.log('\n--- Leaderboard --');
+    console.log('\n--- Leaderboard ---');
     players.forEach((p, index) => {
       console.log(`${index + 1}. ${p.name} - ${p.lowestTime} seconds`);
     });
@@ -197,6 +218,7 @@ async function viewLeaderboard() {
     console.error('Error reading leaderboard:', err);
   }
 }
+
 
 
 mainMenu();

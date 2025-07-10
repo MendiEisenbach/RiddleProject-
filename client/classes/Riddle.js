@@ -1,4 +1,4 @@
-class Riddle {
+class Riddle  {
     constructor(id, name, taskDescription, correctAnswer) {
         this.id = id;
         this.name = name;
