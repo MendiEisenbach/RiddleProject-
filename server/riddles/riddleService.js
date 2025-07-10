@@ -1,6 +1,7 @@
 import fs from 'fs';
 
-const riddlesPath = "riddles/db.txt";
+const riddlesPath = './server/riddles/db.txt';
+
 
 
 export const readRiddles = () => {

@@ -1,6 +1,7 @@
 import fs from 'fs';
 
-const playersPath = "players/players.txt";
+const playersPath = './server/players/players.txt';
+
 
 export const readPlayers = () => {
   return new Promise((resolve, reject) => {
