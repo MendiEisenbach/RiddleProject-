@@ -1,6 +1,7 @@
 import express from 'express';
 import { readRiddles, addRiddle, updateRiddle, deleteRiddle } from '../riddles/riddleService.js';
 
+
 const router = express.Router();
 
 router.get('/', async (req, res) => {

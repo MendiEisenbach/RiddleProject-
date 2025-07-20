@@ -1,32 +1,8 @@
-import fs from 'fs';
-
-const riddlesPath = './server/riddles/db.txt';
+import { getRiddlesCollection } from './mongoService.js';
 
 
-
-export const readRiddles = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(riddlesPath, "utf8", (err, data) => {
-      if (err) return reject(err);
-      try {
-        resolve(JSON.parse(data));
-      } catch (err) {
-        reject(err);
-      }
-    });
-  });
-};
-
-
-export const writeRiddles = (riddles) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(riddlesPath, JSON.stringify(riddles), 'utf8', (err) => {
-      if (err) return reject(err);
-      resolve();
-    });
-  });
-
-  
+export const readRiddles = async () => {
+  return await getRiddlesCollection().find().toArray();
 };
 
 
@@ -35,55 +11,40 @@ export const addRiddle = async (riddle) => {
   const riddles = await readRiddles();
 
   let maxId = 0;
-  for (const currentRiddle of riddles) {
-    if (currentRiddle.id > maxId) {
-      maxId = currentRiddle.id;
+  for (const r of riddles) {
+    if (r.id > maxId) {
+      maxId = r.id;
     }
   }
 
   riddle.id = maxId + 1;
-  riddles.push(riddle);
-  await writeRiddles(riddles);
+  const result = await getRiddlesCollection().insertOne(riddle);
+  return result.insertedId; 
 };
 
 
 
 export const updateRiddle = async (id, updatedRiddle) => {
-  const riddles = await readRiddles();
-
-  let found = false;
-
-  for (let i = 0; i < riddles.length; i++) {
-    if (riddles[i].id === id) {
-      riddles[i].name = updatedRiddle.name;
-      riddles[i].taskDescription = updatedRiddle.taskDescription;
-      riddles[i].correctAnswer = updatedRiddle.correctAnswer;
-      found = true;
-      break; 
+  const result = await getRiddlesCollection().updateOne({ id }, {
+    $set: {
+        name: updatedRiddle.name,
+        taskDescription: updatedRiddle.taskDescription,
+        correctAnswer: updatedRiddle.correctAnswer
+      }
     }
-  }
-
-  if (!found) {
+  )
+    if (result.matchedCount === 0) {
     throw new Error('Riddle not found');
   }
-
-  await writeRiddles(riddles);
-};
-
+}
 
 
 
 export const deleteRiddle = async (id) => {
-  const riddles = await readRiddles();
+  const result = await getRiddlesCollection().deleteOne({ id });
 
-  const newRiddles = riddles.filter(riddle => riddle.id !== id);
-
-  if (newRiddles.length === riddles.length) {
+  if (result.deletedCount === 0) {
     throw new Error('Riddle not found');
   }
-
-  await writeRiddles(newRiddles);
-};
-
-
+}
 
