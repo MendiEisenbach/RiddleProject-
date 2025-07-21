@@ -4,7 +4,6 @@ import Riddle from './classes/Riddle.js';
 const prompt = PromptSync();
 const serverUrl = 'http://localhost:4545'; 
 
-// רגע
 
 async function mainMenu() {
 
@@ -58,19 +57,27 @@ const name = prompt("Please enter your name: ")
 const myplayer = new Player(name)
 
 let players = [];
-  try {
-    players = await fetch(`${serverUrl}/api/players`)
-      .then(res => res.json());
-  } catch (err) {
-    console.error("Error fetching players:", err);
-  }
-  const existingPlayer = players.find(p => p.name.toLowerCase() === name.toLowerCase());
+try {
+  const response = await fetch(`${serverUrl}/api/players`);
+  const json = await response.json();
+  players = json.data || json; 
+} catch (err) {
+  console.error("Error fetching players:", err);
+}
+const existingPlayer = players.find(p => p.name.toLowerCase() === name.toLowerCase());
 
-  if (existingPlayer) {
-    console.log(`Welcome back, ${name}! Your best time is ${existingPlayer.lowestTime} seconds.`);
-  } else {
-    console.log(`Welcome, ${name}! This is your first time playing.`);
-  }
+
+if (existingPlayer) {
+  console.log(`Welcome back, ${name}! Your best time is ${existingPlayer.lowestTime} seconds.`);
+} else {
+  console.log(`Welcome, ${name}! This is your first time playing.`);
+}
+
+
+
+
+
+
 
 
 let riddlesData = [];
