@@ -1,41 +1,56 @@
-# RiddleProject
+# 🧠 RiddleProject
 
-**RiddleProject** is an interactive terminal-based trivia quiz game.  
-Players are challenged with a series of riddles from various topics and must provide the correct answers.
-
----
-
-##  How It Works
-
-1. The user enters their name.  
-2. Riddles are loaded from a modular set of files.  
-3. The game presents each riddle and waits for an answer.  
-4. The time taken to answer is recorded.  
-5. At the end, player statistics are displayed.
+**RiddleProject** is a terminal-based trivia challenge game.  
+Players solve riddles from various topics, with their solving time tracked and ranked.  
+Riddles are stored in **MongoDB**, player data is managed via **Supabase**, and the game is built with a modular **client-server** architecture.
 
 ---
 
-##  Flowchart – Program Logic
+## 🚀 How It Works
+
+1. User launches the game and enters their name.
+2. The system checks Supabase for an existing player.
+3. If not found, a new player is created.
+4. Riddles are fetched from MongoDB.
+5. Each riddle is presented one by one, and the player responds.
+6. The time taken to solve each riddle is measured and recorded.
+7. At the end:
+   - The results are saved.
+   - Player stats are displayed.
+   - The leaderboard can be viewed.
+8. The player can also create, update, or delete riddles via menu options.
+
+---
+
+## 🔁 Flowchart – Program Logic
 
 ```
 START  
  ↓  
-Welcome message is displayed  
+Display welcome message  
  ↓  
-User enters their name  
+User inputs name  
  ↓  
-Create new Player instance → Player(name)  
+Check Supabase:  
+   → If exists → Load player  
+   → Else → Create new player  
  ↓  
-For each riddle in AllRiddles:  
-   → Start timer → Date.now()  
-   → Create new Riddle instance → Riddle(id, name, taskDescription, correctAnswer)  
-   → Ask the riddle → Riddle.ask(prompt)  
-   → End timer → Date.now()  
-   → Record time taken → Player.recordTime(start, end)  
+Fetch all riddles from MongoDB  
  ↓  
-After all riddles answered:  
-   → Show success message  
-   → Show stats → Player.showStats()  
+For each riddle:  
+   → Start timer  
+   → Display question  
+   → Wait for user input  
+   → Stop timer  
+   → Record time  
+ ↓  
+After all riddles:  
+   → Save results to Supabase  
+   → Display stats and leaderboard  
+   → Show options:  
+       - Play again  
+       - Manage riddles (CRUD)  
+       - Exit  
  ↓  
 END
 ```
@@ -45,29 +60,54 @@ END
 ## 📁 Project Structure
 
 ```
-RiddleProject/
-├── app.js               # Main game controller
-├── classes/
-│   ├── Player.js        # Manages player info, timing, and stats
-│   └── Riddle.js        # Represents a single riddle and handles input/output
-├── riddles/
-│   ├── r1.js, r2.js...  # Individual riddle files
-│   └── AllRiddles.js    # Aggregates all riddles into a single export
-├── README.md            # Project description
+project-root/
+├── .env
+├── README.md
+├── client/
+│   ├── app.js                 ← User menu, interaction logic, fetch API calls
+│   └── models/
+│       ├── Riddle.js          ← Riddle class model
+│       └── Player.js          ← Player class model
+├── server/
+│   ├── server.js              ← Express server setup, routes mounting
+│   ├── routes/
+│   │   ├── riddlesRouter.js   ← Riddle-related API routes
+│   │   └── playersRouter.js   ← Player-related API routes
+│   ├── riddles/
+│   │   ├── riddleService.js   ← Riddle CRUD logic using MongoDB
+│   │   └── mongoService.js    ← MongoDB connection handler
+│   └── players/
+│       ├── playersService.js      ← Supabase player logic
+│       └── supabaseService.js     ← Supabase API client and DB access
+└── package.json
 ```
 
 ---
 
-## Features
+## ✨ Features
 
-- Multiple riddles from different topics  
-- Response time tracking  
-- Object-Oriented structure  
-- Modular and extensible design  
+- 🧩 Multiple riddles from different topics
+- ⏱️ Response time tracking per riddle
+- 👤 Player history and ranking via Supabase
+- 🌐 MongoDB-based riddle storage with full CRUD
+- 📊 Leaderboard of fastest players
+- 🧱 Object-Oriented design (Player & Riddle classes)
+- 🔁 Modular client-server architecture
+- 🎮 Interactive CLI menu system
+- 📡 RESTful API (Express.js backend)
 
 ---
 
-## Author
+## 🧪 Technologies
+
+- Node.js
+- Express.js
+- MongoDB (via MongoDB Atlas)
+- Supabase (PostgreSQL-based backend as a service)
+
+---
+
+## 👤 Author
 
 **Menachem Eisenbach**  
-Created for learning and personal development.
+Built as a hands-on learning project and code architecture exercise.
