@@ -4,22 +4,65 @@ import Riddle from './classes/Riddle.js';
 const prompt = PromptSync();
 const serverUrl = 'http://localhost:4545'; 
 
+const session = {
+  token: null,
+  username: null,
+  role: 'guest'
+};
 
-async function mainMenu() {
-
-console.log("\n---------------------------")
+async function startApp() {
+  console.log("\n---------------------------")
 console.log("Welcome to the trivia quiz!")
 console.log("---------------------------")
 
+  console.log("\n1. Sign up");
+  console.log("2. Log in");
+  console.log("3. Play as Guest");
+  console.log("0. Exit");
+
+  const choice = prompt("Choose an option: ");
+
+  switch (choice) {
+    case '1':
+      await signUp();
+      break;
+    case '2':
+      await logIn();
+      break;
+    case '3':
+      console.log("Continuing as Guest...");
+      break;
+    case '0':
+      console.log("Goodbye!");
+      process.exit(0);
+    default:
+      console.log("Invalid choice");
+      return startApp();
+  }
+
+  await mainMenu();
+}
+
+
+async function mainMenu() {
+
   while (true) {
-    console.log('\n--- Main Menu ---');
-    console.log('1. Play the game');
-    console.log('2. Create a new riddle');
-    console.log('3. Read all riddles');
-    console.log('4. Update an existing riddle');
-    console.log('5. Delete a riddle');
-    console.log('6. View leaderboard');
-    console.log('0. Exit');
+      console.log(`\n--- Main Menu (${session.role}) ---`);
+console.log('1. Play the game');
+
+if (session.role !== 'guest') {
+  console.log('2. Create a new riddle');
+  console.log('3. Read all riddles');
+}
+
+if (session.role === 'admin') {
+  console.log('4. Update an existing riddle');
+  console.log('5. Delete a riddle');
+}
+
+console.log('6. View leaderboard');
+console.log('0. Exit');
+
     const choice = prompt('Choose an option: ');
 
     switch (choice) {
@@ -53,7 +96,7 @@ console.log("---------------------------")
 
 
 async function playGame() {
-const name = prompt("Please enter your name: ")
+const name = session.username ?? prompt("Please enter your name: ");
 const myplayer = new Player(name)
 
 let players = [];
@@ -75,19 +118,30 @@ if (existingPlayer) {
 
 
 
-
-
-
-
-
 let riddlesData = [];
 try {
-    riddlesData = await fetch(`${serverUrl}/api/riddles`)
-      .then(res => res.json());
-  } catch (err) {
-    console.error("Error fetching riddles:", err);
+  const res = await fetch(`${serverUrl}/api/riddles`, {
+    headers: {
+      ...(session.token && { 'Authorization': `Bearer ${session.token}` })
+    }
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    console.log("Failed to fetch riddles:", data.error || 'Unknown error');
+    return;
   }
-  const riddles = riddlesData.map(r => new Riddle(r.id, r.name, r.taskDescription, r.correctAnswer));
+
+  riddlesData = data;
+
+} catch (err) {
+  console.error("Error fetching riddles:", err.message);
+  return;
+}
+
+const riddles = riddlesData.map(r => new Riddle(r.id, r.name, r.taskDescription, r.correctAnswer));
+
 
   console.log(`\nHi ${myplayer.name}, let's start!\n`);
 
@@ -130,10 +184,13 @@ async function createRiddle() {
 
   try {
     await fetch(`${serverUrl}/api/riddles`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newRiddle)
-    });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    ...(session.token && { 'Authorization': `Bearer ${session.token}` }),
+  },
+  body: JSON.stringify(newRiddle)
+});
     console.log('Riddle added successfully.');
   } catch (err) {
     console.error('Error adding riddle:', err);
@@ -143,7 +200,16 @@ async function createRiddle() {
 
 async function readAllRiddles() {
   try {
-    const riddles = await(await fetch(`${serverUrl}/api/riddles`)).json();
+    const res = await fetch(`${serverUrl}/api/riddles`, {
+     headers: {
+  'Content-Type': 'application/json'
+}
+
+    });
+
+    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+
+    const riddles = await res.json();
 
     console.log('\n--- All Riddles ---');
     riddles.forEach(r => {
@@ -152,9 +218,10 @@ async function readAllRiddles() {
       console.log(`Answer: ${r.correctAnswer}\n`);
     });
   } catch (err) {
-    console.error('Error reading riddles:', err);
+    console.error('Error reading riddles:', err.message || err);
   }
 }
+
 
 
 async function updateExistingRiddle() {
@@ -174,10 +241,14 @@ async function updateExistingRiddle() {
     const correctAnswer = prompt(`Enter new correct answer (${riddle.correctAnswer}): `) || riddle.correctAnswer;
 
     await fetch(`${serverUrl}/api/riddles/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, taskDescription, correctAnswer })
-    });
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    ...(session.token && { 'Authorization': `Bearer ${session.token}` }),
+  },
+  body: JSON.stringify({ name, taskDescription, correctAnswer }),
+});
+
 
     console.log('Riddle updated successfully.');
   } catch (err) {
@@ -191,9 +262,14 @@ async function deleteExistingRiddle() {
     const idStr = prompt('Enter the ID of the riddle to delete: ');
     const id = Number(idStr);
 
+    
     await fetch(`${serverUrl}/api/riddles/${id}`, {
-      method: 'DELETE'
-    });
+  method: 'DELETE',
+  headers: {
+    ...(session.token && { 'Authorization': `Bearer ${session.token}` }),
+  }
+});
+
 
     console.log('Riddle deleted successfully.');
   } catch (err) {
@@ -227,5 +303,68 @@ async function viewLeaderboard() {
 }
 
 
+async function signUp() {
+  const name = prompt("Choose a username: ");
+  const password = prompt("Choose a password: ");
 
-mainMenu();
+  try {
+    const res = await fetch(`${serverUrl}/api/players/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: name, password }) 
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.log("Signup failed:", data.error || data.msg);
+      return await startApp();
+    }
+
+    session.token = data.token;
+    session.username = name;
+    session.role = data.role || 'user';
+
+    console.log("Signed up successfully as", name);
+
+  } catch (err) {
+    console.error("Signup error:", err);
+    await startApp();
+  }
+}
+
+
+
+async function logIn() {
+  const name = prompt("Enter username: ");
+  const password = prompt("Enter password: ");
+
+  try {
+    const res = await fetch(`${serverUrl}/api/players/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: name, password }) 
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.log("Login failed:", data.error || data.msg);
+      return await startApp();
+    }
+
+    session.token = data.token;
+    session.username = name;
+    session.role = data.role || 'user';
+
+    console.log("Logged in as", name);
+
+  } catch (err) {
+    console.error("Login error:", err);
+    await startApp();
+  }
+}
+
+
+
+startApp();
