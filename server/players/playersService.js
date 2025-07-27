@@ -58,7 +58,6 @@ export async function loginPlayer(username, password) {
 }
 
 
-
 export function verifyToken(token) {
   try {
     return jwt.verify(token, SECRET);
@@ -66,7 +65,6 @@ export function verifyToken(token) {
     return null;
   }
 }
-
 
 
 export const readPlayers = async () => {
@@ -79,7 +77,6 @@ export const readPlayers = async () => {
 };
 
 
-
 export const findPlayerByName = async (name) => {
   const { data, error } = await supabase
     .from('Players')
@@ -89,7 +86,6 @@ export const findPlayerByName = async (name) => {
   if (error) throw new Error(`Failed to search player: ${error.message}`);
   return data;
 };
-
 
 
 export const savePlayerTime = async (name, time) => {
