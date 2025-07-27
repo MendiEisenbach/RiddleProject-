@@ -1,8 +1,15 @@
 import express from 'express';
-import { readRiddles, addRiddle, updateRiddle, deleteRiddle } from '../riddles/riddleService.js';
+import {
+  readRiddles,
+  addRiddle,
+  updateRiddle,
+  deleteRiddle
+} from '../riddles/riddleService.js';
 
+import { requireAuth, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
+
 
 router.get('/', async (req, res) => {
   try {
@@ -14,8 +21,7 @@ router.get('/', async (req, res) => {
 });
 
 
-
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const { name, taskDescription, correctAnswer } = req.body;
 
   if (!name || !taskDescription || !correctAnswer) {
@@ -32,7 +38,7 @@ router.post('/', async (req, res) => {
 
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAuth, requireRole('admin'), async (req, res) => {
   const id = Number(req.params.id);
   const { name, taskDescription, correctAnswer } = req.body;
 
@@ -44,8 +50,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, requireRole('admin'), async (req, res) => {
   const id = Number(req.params.id);
 
   try {
@@ -55,5 +60,6 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete riddle', details: error.message });
   }
 });
+
 
 export default router;
