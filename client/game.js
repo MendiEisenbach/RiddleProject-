@@ -2,8 +2,8 @@ import promptSync from 'prompt-sync';
 const prompt = promptSync();
 
 import { session } from './auth.js';
-import Player from './models/Player.js';
-import Riddle from './models/Riddle.js';
+import Player from './classes/Player.js';
+import Riddle from './classes/Riddle.js';
 
 const serverUrl = 'http://localhost:4545';
 

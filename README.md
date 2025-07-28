@@ -6,7 +6,7 @@ Riddles are stored in MongoDB, player data is managed via Supabase, and the game
 
 🚀 How It Works  
 User launches the game and chooses how to log in:  
-→ As a **Guest**, **Registered Player**, or **Admin**.  
+→ As a **Guest** or **Registered Player**.  
 Based on the choice, the server authenticates the player and returns a **JWT token**.  
 The token is saved locally and attached to every protected request.  
 Riddles are fetched from MongoDB.  
@@ -105,7 +105,7 @@ project-root/
 │   ├── auth.js            ← Login, signup, session management
 │   ├── game.js            ← Gameplay flow + leaderboard
 │   ├── riddles.js         ← API logic (CRUD riddles)
-│   └── models/
+│   └── classes/
 │       ├── Player.js
 │       └── Riddle.js
 ├── server/
