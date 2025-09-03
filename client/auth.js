@@ -7,7 +7,7 @@ export const session = {
   role: 'guest',
 };
 
-const serverUrl = 'http://localhost:4545';
+const serverUrl = 'https://riddleproject.onrender.com';
 
 export async function signUp() {
   const name = prompt("Choose a username: ");

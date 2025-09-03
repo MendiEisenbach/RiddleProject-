@@ -5,7 +5,7 @@ import { session } from './auth.js';
 import Player from './classes/Player.js';
 import Riddle from './classes/Riddle.js';
 
-const serverUrl = 'http://localhost:4545';
+const serverUrl = 'https://riddleproject.onrender.com';
 
 export async function playGame() {
   const name = session.username ?? prompt("Please enter your name: ");

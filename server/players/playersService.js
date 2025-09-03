@@ -32,7 +32,7 @@ export const registerPlayer = async (username, password) => {
     expiresIn: '1h',
   });
 
-  return { token, role: 'user' };
+  return { token,username, role: 'user' };
 };
 
 
@@ -54,7 +54,7 @@ export async function loginPlayer(username, password) {
     { expiresIn: '2h' }
   );
 
-  return { token, role: data.role };
+  return { token,username, role: data.role };
 }
 
 

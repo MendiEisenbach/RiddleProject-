@@ -3,7 +3,7 @@ const prompt = promptSync();
 
 import { session } from './auth.js';
 
-const serverUrl = 'http://localhost:4545';
+const serverUrl = 'https://riddleproject.onrender.com';
 
 export async function createRiddle() {
   const name = prompt('Enter riddle name: ');
