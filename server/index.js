@@ -7,8 +7,8 @@ import cors from 'cors';
 
 const server = express();
 const port = 4545;
-app.use(cors()); 
-app.get('/test', (req, res) => {
+server.use(cors()); 
+server.get('/test', (req, res) => {
   res.json({ message: 'CORS fonctionne !' });
 });
 server.use(express.json());
