@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', requireAuth, async (req, res) => {
   const { name, taskDescription, correctAnswer } = req.body;
-
+  console.log(req.body)
   if (!name || !taskDescription || !correctAnswer) {
     return res.status(400).json({ error: 'Missing required fields' });
   }

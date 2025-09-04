@@ -41,7 +41,7 @@ router.post('/signup', async (req, res) => {
 
   try {
     const { token, role } = await registerPlayer(username, password);
-    res.status(201).json({ msg: 'Signup successful', token, role });
+    res.status(201).json({ msg: 'Signup successful', token, role, username });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

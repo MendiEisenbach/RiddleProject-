@@ -54,7 +54,7 @@ export async function loginPlayer(username, password) {
     { expiresIn: '2h' }
   );
 
-  return { token,username, role: data.role };
+  return { token ,username, role: data.role };
 }
 
 
